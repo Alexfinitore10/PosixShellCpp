@@ -25,6 +25,8 @@ int main() {
       std::cout << input.substr(5) << " is a shell builtin" << std::endl;
     }else if (input.find("type exit") == 0){
       std::cout << input.substr(5) << " is a shell builtin" << std::endl;
+    }else if (input.find("type type") == 0){
+      std::cout << input.substr(5) << " is a shell builtin" << std::endl;
     }else{
       std::cout << input << ": command not found" << std::endl;
     }
