@@ -18,6 +18,9 @@ int main() {
     if(input == "exit 0")
     {
       exit(EXIT_SUCCESS);
+    }else if(input.find("echo ") == 0){
+      std::string text = input.substr(5);
+      std::cout << text << std::endl;
     }else{
       std::cout << input << ": command not found" << std::endl;
     }
