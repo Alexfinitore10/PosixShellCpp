@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string.h>
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -7,6 +8,12 @@ int main() {
 
   // Uncomment this block to pass the first stage
   std::cout << "$ ";
+  
+  std::string input;
+  std::getline(std::cin, input);
+
+  std::cout << input << " : command not found" << std::endl;
+  
 
   std::string input;
   std::getline(std::cin, input);
