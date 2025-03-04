@@ -1,5 +1,7 @@
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
+#include <filesystem>
 
 
 int main() {
@@ -32,9 +34,10 @@ int main() {
         std::istringstream path_stream(path);
         std::string buffer;
         while(std::getline(path_stream, buffer, ':')){
-          if(buffer.find(tipo) != std::string::npos)//mannaggia
+          std::filesystem::path patto = std::filesystem::path(buffer) / tipo;
+          if(std::filesystem::exists(patto))//mannaggia guarda
           {
-            std::cout<<tipo<<" is "<<buffer<<std::endl;
+            std::cout<<tipo<<" is "<<patto.string()<<std::endl;
             found = true;
             break;
           }
