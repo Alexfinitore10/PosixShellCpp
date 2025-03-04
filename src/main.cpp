@@ -32,7 +32,7 @@ int main() {
         std::istringstream path_stream(path);
         std::string buffer;
         while(std::getline(path_stream, buffer, ':')){
-          if(buffer.find(tipo))
+          if(buffer.find(tipo) != std::string::npos)
           {
             std::cout<<tipo<<" is "<<buffer<<std::endl;
             found = true;
