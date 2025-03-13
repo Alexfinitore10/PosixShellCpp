@@ -183,7 +183,7 @@ void TypeCheck(CommandType cmt)
     std::cout<<cmt.command<<" is a shell builtin"<<std::endl;
     break;
   case Type::Executable:
-    std::cout<<cmt.command<<" is "<<cmt.command<<std::endl;
+    std::cout<<cmt.command<<" is "<<cmt.command_path<<std::endl;
   case Type::NotFound:
     std::cout<<cmt.command<<" not found"<<std::endl;
   default:
