@@ -74,6 +74,7 @@ int main(int argc, char* argv[]) {
       break;
     case Type::NotFound :
       std::cout<<commandType.command<<" not found"<<std::endl;
+      break;
     default:
       break;
     }
