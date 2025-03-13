@@ -166,7 +166,7 @@ void doBuiltin(CommandType cmt, std::vector<std::string> vec)
       return;
     }else{
       CommandType cmt;
-      for (int a=1; a<vec.size() -1 ; a++)
+      for (int a=1; a<vec.size() ; a++)
       {
         //teoricamente dovrei fare un check progressivo del tipo e del path
         cmt = checkCommand(vec[a]);//mi parsa il comando incoming
@@ -185,8 +185,10 @@ void TypeCheck(CommandType cmt)
     break;
   case Type::Executable:
     std::cout<<cmt.command<<" is "<<cmt.command_path.c_str()<<std::endl;
+    break;
   case Type::NotFound:
     std::cout<<cmt.command<<" not found"<<std::endl;
+    break;;
   default:
     break;
   }
