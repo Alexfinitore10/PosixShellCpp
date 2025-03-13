@@ -187,7 +187,7 @@ void TypeCheck(CommandType cmt)
     std::cout<<cmt.command<<" is "<<cmt.command_path.c_str()<<std::endl;
     break;
   case Type::NotFound:
-    std::cout<<cmt.command<<" not found"<<std::endl;
+    std::cout<<cmt.command<<": not found"<<std::endl;
     break;
   default:
     break;
