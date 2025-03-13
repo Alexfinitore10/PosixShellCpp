@@ -15,17 +15,28 @@ enum Type{
   NotFound,
 };
 
+struct CommandType
+{
+  std::string command;
+  std::filesystem::path command_path;
+  Type type;
+  int argn;
+};
+
+
 
 std::vector<std::string> parsingTheCommand(std::string);
-std::filesystem::path isInPath(std::string, std::string);
-std::pair<Type, std::string> generateFullCommand(std::string);
+std::filesystem::path findPath(std::string);
+CommandType checkCommand(std::string);
+void doBuiltin(CommandType, std::vector<std::string>);
+void doExecutable(CommandType, std::vector<std::string>);
+void TypeCheck(CommandType);
 
  
 
 
 int main(int argc, char* argv[]) {
   auto const t0 = std::chrono::high_resolution_clock::now();
-  const char * path = std::getenv("PATH");//mi prendo il path
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
@@ -34,58 +45,39 @@ int main(int argc, char* argv[]) {
   //REPL
   while (1)
   {
+    CommandType commandType;
     std::cout << "$ ";
 
     std::getline(std::cin, input);
 
-    std::vector<std::string> parsedCommand = parsingTheCommand(input);
+    std::vector<std::string> parsedCommand = parsingTheCommand(input);//divide tutto in array
     
-    /* for (auto a : parsedCommand)
+   /*  for (auto a : parsedCommand)
     {
       std::cout<<a<<std::endl;
     } */
-    
-    if(input == "exit 0")
+
+    //devo mandare il primo elemento dell'array a far capire se è executable, builtin o non trovato
+    commandType = checkCommand(parsedCommand[0]);
+
+    switch (commandType.type)
     {
-      //auto const t1 = std::chrono::high_resolution_clock::now();
-      //std::chrono::duration<double> duration = t1 - t0;
-      //std::cout << "implementation1 duration: " << duration.count() << "s\n";
-      exit(EXIT_SUCCESS);
-    }else if(input.find("echo ") == 0){//repeat
-      std::string text = input.substr(5);
-      std::cout << text << std::endl;
-    }else if (input.substr(0,5) == "type "){//type
-      std::string tipo = input.substr(5);
-      //Discriminating if it's NOT an executable file (env)
-      if(tipo.substr(0,4) == "echo" || tipo.substr(0,4) == "type" || tipo.substr(0,4) == "exit"){
-        std::cout << tipo << " is a shell builtin" << std::endl;
-      }else{
-        std::filesystem::path patto = isInPath(path, tipo);
-        if( patto == "")std::cout << tipo << ": not found" << std::endl;else{
-          std::cout<<tipo<<" is "<<patto.string()<<std::endl;
-        }
+    case Type::Builtin : 
+      if(commandType.command == "exit")
+      {
+        exit(0);
       }
-    }else{
-      std::filesystem::path patto = isInPath(path, input.substr(0, input.find(' ')));
-
-      if(patto != "" && argc > 1)
-      {
-        for(int i=0; i<argc; i++)
-        {
-          patto += " ";
-          patto += argv[i];
-        }
-        
-        std::cout<<"Ending command : "<< patto.c_str()<<std::endl;
-
-        system(patto.c_str());
-      }else if (patto != "")
-      {
-        std::cout<<"Ending command : "<< patto.c_str()<<std::endl;
-
-        system(patto.c_str());
-      }else std::cout << input << ": command not found" << std::endl;
+      doBuiltin(commandType, parsedCommand);
+      break;
+    case Type::Executable :
+      doExecutable(commandType, parsedCommand);
+      break;
+    case Type::NotFound :
+      std::cout<<commandType.command<<" not found"<<std::endl;
+    default:
+      break;
     }
+    
   }
 }
 
@@ -112,8 +104,9 @@ std::vector<std::string> parsingTheCommand(std::string input)
   return vec;
 }
 
-std::filesystem::path isInPath(std::string path, std::string input)
+std::filesystem::path findPath(std::string input)
 {
+  const char * path = std::getenv("PATH");//mi prendo il path
   std::istringstream path_stream(path);
   std::string buffer;
         
@@ -127,13 +120,88 @@ std::filesystem::path isInPath(std::string path, std::string input)
   return "";
 }
 
-std::pair<Type, std::string> generateFullCommand(std::string comando)
+CommandType checkCommand(std::string comando)
 {
-  std::pair<Type, std::string> comandoCoppia;
+  CommandType commandType;
   //comadno puo essere BUIltin, executable, not found
-  if(comando == "echo" || comando == "exit" || comando == "type")
+  if(comando == "echo" || comando == "exit"|| comando == "type")
   {
-    //TODO
+    commandType.type = Type::Builtin;
+    commandType.command_path = findPath(comando);
+    commandType.command = comando;
+    return commandType;
   }
+  std::string path = findPath(comando);
+  if (path != "")
+  {
+    commandType.type = Type::Executable;
+    commandType.command_path = path;
+    commandType.command = comando;
+    return commandType;
+  }
+
+  commandType.type = Type::NotFound;
+  commandType.command = comando;
+  return commandType;
+  
+}
+
+void doBuiltin(CommandType cmt, std::vector<std::string> vec)
+{
+  //devo trovare quale builtin si riferisce e dare il risultato
+  if (cmt.command == "echo")
+  {
+    std::cout<<"\n";
+    for (int i=1; i<vec.size(); i++)
+    {
+      std::cout<<vec[i]<<" "<<std::endl;
+    }
+  }else if (cmt.command == "type")
+  {
+    //ci vediamo domani mattina...
+    if (vec.size() < 2)
+    {
+      std::cout<<"Type : Missing Arguments"<<std::endl;
+      return;
+    }else{
+      CommandType cmt;
+      for (int a=1; a<vec.size(); a++)
+      {
+        //teoricamente dovrei fare un check progressivo del tipo e del path
+        cmt = checkCommand(vec[a]);//mi parsa il comando incoming
+        TypeCheck(cmt);
+      }
+    }
+  }
+}
+
+void TypeCheck(CommandType cmt)
+{
+  switch (cmt.type)
+  {
+  case Type::Builtin :
+    std::cout<<cmt.command<<" is a shell builtin"<<std::endl;
+    break;
+  case Type::Executable:
+    std::cout<<cmt.command<<" is "<<cmt.command<<std::endl;
+  case Type::NotFound:
+    std::cout<<cmt.command<<" not found"<<std::endl;
+  default:
+    break;
+  }
+}
+
+
+void doExecutable(CommandType cmt, std::vector<std::string> vec)
+{
+  std::string fullCommand = cmt.command_path;
+  //se è eseguibile... ha il path e ha gli argomenti
+  for(int i = 1 ; i<vec.size(); i++)
+  {
+    fullCommand += " ";
+    fullCommand += vec[i];
+  }
+  const char *command_path = fullCommand.c_str();
+  system(command_path);
 }
 
