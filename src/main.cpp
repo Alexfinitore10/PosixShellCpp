@@ -194,7 +194,7 @@ void TypeCheck(CommandType cmt)
 
 void doExecutable(CommandType cmt, std::vector<std::string> vec)
 {
-  std::string fullCommand = cmt.command_path;
+  std::string fullCommand = cmt.command;
   //se è eseguibile... ha il path e ha gli argomenti
   for(int i = 1 ; i<vec.size(); i++)
   {
