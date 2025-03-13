@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
       doExecutable(commandType, parsedCommand);
       break;
     case Type::NotFound :
-      std::cout<<commandType.command<<" not found"<<std::endl;
+      std::cout<<commandType.command<<": not found"<<std::endl;
       break;
     default:
       break;
