@@ -166,7 +166,7 @@ void doBuiltin(CommandType cmt, std::vector<std::string> vec)
       return;
     }else{
       CommandType cmt;
-      for (int a=1; a<vec.size(); a++)
+      for (int a=1; a<vec.size() -1 ; a++)
       {
         //teoricamente dovrei fare un check progressivo del tipo e del path
         cmt = checkCommand(vec[a]);//mi parsa il comando incoming
