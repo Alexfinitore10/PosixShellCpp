@@ -152,11 +152,11 @@ void doBuiltin(CommandType cmt, std::vector<std::string> vec)
   //devo trovare quale builtin si riferisce e dare il risultato
   if (cmt.command == "echo")
   {
-    std::cout<<"\n";
     for (int i=1; i<vec.size(); i++)
     {
-      std::cout<<vec[i]<<" "<<std::endl;
+      std::cout<<vec[i]<<" ";
     }
+    std::cout<<std::endl;
   }else if (cmt.command == "type")
   {
     //ci vediamo domani mattina...
@@ -188,7 +188,7 @@ void TypeCheck(CommandType cmt)
     break;
   case Type::NotFound:
     std::cout<<cmt.command<<" not found"<<std::endl;
-    break;;
+    break;
   default:
     break;
   }
