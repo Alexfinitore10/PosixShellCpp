@@ -32,7 +32,7 @@ void doBuiltin(CommandType, std::vector<std::string>);
 void doExecutable(CommandType, std::vector<std::string>);
 void TypeCheck(CommandType);
 
-std::filesystem::path currentPath = "/home/alex";
+std::filesystem::path currentPath;
 
  
 
@@ -43,7 +43,6 @@ int main(int argc, char* argv[]) {
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
   std::string input;
-  std::filesystem::current_path(currentPath);
 
   
 
