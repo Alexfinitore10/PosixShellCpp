@@ -32,6 +32,8 @@ void doBuiltin(CommandType, std::vector<std::string>);
 void doExecutable(CommandType, std::vector<std::string>);
 void TypeCheck(CommandType);
 
+std::filesystem::path currentPath = "/home/alex";
+
  
 
 
@@ -41,6 +43,9 @@ int main(int argc, char* argv[]) {
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
   std::string input;
+  std::filesystem::current_path(currentPath);
+
+  
 
   //REPL
   while (1)
@@ -51,11 +56,7 @@ int main(int argc, char* argv[]) {
     std::getline(std::cin, input);
 
     std::vector<std::string> parsedCommand = parsingTheCommand(input);//divide tutto in array
-    
-   /*  for (auto a : parsedCommand)
-    {
-      std::cout<<a<<std::endl;
-    } */
+
 
     //devo mandare il primo elemento dell'array a far capire se è executable, builtin o non trovato
     commandType = checkCommand(parsedCommand[0]);
@@ -105,7 +106,8 @@ std::vector<std::string> parsingTheCommand(std::string input)
   return vec;
 }
 
-std::filesystem::path findPath(std::string input)
+//returna il path se esiste
+std::filesystem::path findPath(std::string input)//returna il pat
 {
   const char * path = std::getenv("PATH");//mi prendo il path
   std::istringstream path_stream(path);
@@ -125,7 +127,7 @@ CommandType checkCommand(std::string comando)
 {
   CommandType commandType;
   //comadno puo essere BUIltin, executable, not found
-  if(comando == "echo" || comando == "exit"|| comando == "type" || comando == "pwd")
+  if(comando == "echo" || comando == "exit"|| comando == "type" || comando == "pwd" || comando == "cd")
   {
     commandType.type = Type::Builtin;
     commandType.command_path = findPath(comando);
@@ -176,6 +178,28 @@ void doBuiltin(CommandType cmt, std::vector<std::string> vec)
   }else if (cmt.command == "pwd")
   {
     system(cmt.command.c_str());
+  }else if (cmt.command == "cd")//capitolozzo di dio
+  {
+    //voglio cambiare path
+    if(vec.size() > 2)
+    {
+      std::cout<<"Too many arguments for command : "<<cmt.command<<std::endl;
+      return;
+    }
+
+    if(vec.size() == 1)
+    {
+      currentPath = findPath("/home/alex");
+      return;
+    }
+
+    std::filesystem::path newPath = findPath(vec[1]);
+    if(newPath == "")
+    {
+      std::cout<<"cd: "<<vec[1]<<": No such file or directory"<<std::endl;
+      return;
+    }
+    std::filesystem::current_path(newPath);
   }
 }
 
