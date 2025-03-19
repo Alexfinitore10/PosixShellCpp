@@ -125,7 +125,7 @@ CommandType checkCommand(std::string comando)
 {
   CommandType commandType;
   //comadno puo essere BUIltin, executable, not found
-  if(comando == "echo" || comando == "exit"|| comando == "type")
+  if(comando == "echo" || comando == "exit"|| comando == "type" || comando == "pwd")
   {
     commandType.type = Type::Builtin;
     commandType.command_path = findPath(comando);
@@ -180,7 +180,7 @@ void TypeCheck(CommandType cmt)
 {
   switch (cmt.type)
   {
-  case Type::Builtin :
+  case Type::Builtin:
     std::cout<<cmt.command<<" is a shell builtin"<<std::endl;
     break;
   case Type::Executable:
