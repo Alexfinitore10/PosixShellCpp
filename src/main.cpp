@@ -173,6 +173,9 @@ void doBuiltin(CommandType cmt, std::vector<std::string> vec)
         TypeCheck(cmt);
       }
     }
+  }else if (cmt.command == "pwd")
+  {
+    system(cmt.command.c_str());
   }
 }
 
@@ -199,11 +202,15 @@ void doExecutable(CommandType cmt, std::vector<std::string> vec)
 {
   std::string fullCommand = cmt.command;
   //se è eseguibile... ha il path e ha gli argomenti e funziona ogni comando
-  for(int i = 1 ; i<vec.size(); i++)
+  if(vec.size() > 1)
   {
-    fullCommand += " ";
-    fullCommand += vec[i];
+    for(int i = 1 ; i<vec.size(); i++)
+    {
+      fullCommand += " ";
+      fullCommand += vec[i];
+    }
   }
+
   const char *command_path = fullCommand.c_str();
   system(command_path);
 }
