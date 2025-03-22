@@ -197,7 +197,7 @@ void doBuiltin(CommandType cmt, std::vector<std::string> vec)
 
     //check the path, if it's relative or absolute
     std::filesystem::path newPath = getNewPath(vec[1]);
-    
+
     if(newPath == "")
     {
       std::cout<<"cd: "<<vec[1]<<": No such file or directory"<<std::endl;
@@ -230,7 +230,13 @@ std::filesystem::path getNewPath(std::string argument)
       return cur;
     }
    return cur;
+  }else if(argument.find_first_of("/") == 0){
+    if(std::filesystem::exists(argument))
+    {
+      return argument;
+    }
   }
+
 
   return "";
 }
