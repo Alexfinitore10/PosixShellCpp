@@ -217,9 +217,12 @@ std::filesystem::path getNewPath(std::string argument)
     {
       for(int i = 0; i<=argument.size(); i+=3)
       {
-        argument = argument.substr(3,argument.size());
-        int pos = cur.find_last_of("/");
-        cur = cur.substr(0, pos);
+        if(argument.substr(0,3) == "../")
+        {
+          int pos = cur.find_last_of("/");
+          cur = cur.substr(0, pos);
+          argument = argument.substr(3,argument.size());
+        }else std::cout<<"Comando non trovato"<<std::endl;
       }
     }else
     {
