@@ -210,13 +210,25 @@ void doBuiltin(CommandType cmt, std::vector<std::string> vec)
 std::filesystem::path getNewPath(std::string argument)
 {
   std::string cur = std::filesystem::current_path();
-  if(argument == "../")
+  if(argument.substr(0,3) == "../")
   {
     //go back to previous folder
-    int pos = cur.find_last_of("/");
+    if(argument.size() > 3)
+    {
+      for(int i = 0; i<=argument.size(); i+=3)
+      {
+        argument = argument.substr(3,argument.size());
+        std::cout<<argument<<std::endl;
+        int pos = cur.find_last_of("/");
+        cur = cur.substr(0, pos);
+      }
+    }else
+    {
+      int pos = cur.find_last_of("/");
+      cur = cur.substr(0, pos);
+    }
     
-    cur = cur.substr(0, pos);
-
+    
     return cur;
   }else if(argument.substr(0,2) == "./")
   {
