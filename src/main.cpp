@@ -31,6 +31,7 @@ CommandType checkCommand(std::string);
 void doBuiltin(CommandType, std::vector<std::string>);
 void doExecutable(CommandType, std::vector<std::string>);
 void TypeCheck(CommandType);
+std::filesystem::path getNewPath(std::string);
 
 std::filesystem::path currentPath;
 
@@ -106,7 +107,7 @@ std::vector<std::string> parsingTheCommand(std::string input)
 }
 
 //returna il path se esiste
-std::filesystem::path findPath(std::string input)//returna il pat
+std::filesystem::path findPath(std::string input)//returna il path
 {
   const char * path = std::getenv("PATH");//mi prendo il path
   std::istringstream path_stream(path);
@@ -176,8 +177,9 @@ void doBuiltin(CommandType cmt, std::vector<std::string> vec)
     }
   }else if (cmt.command == "pwd")
   {
+    //change to a diverse function
     system(cmt.command.c_str());
-  }else if (cmt.command == "cd")//capitolozzo di dio
+  }else if (cmt.command == "cd")//cambia directory
   {
     //voglio cambiare path
     if(vec.size() > 2)
@@ -189,10 +191,13 @@ void doBuiltin(CommandType cmt, std::vector<std::string> vec)
     if(vec.size() == 1)
     {
       currentPath = findPath("/home/alex");
+      std::filesystem::current_path(currentPath);
       return;
     }
 
-    std::filesystem::path newPath = findPath(vec[1]);
+    //check the path, if it's relative or absolute
+    std::filesystem::path newPath = getNewPath(vec[1]);
+    
     if(newPath == "")
     {
       std::cout<<"cd: "<<vec[1]<<": No such file or directory"<<std::endl;
@@ -200,6 +205,34 @@ void doBuiltin(CommandType cmt, std::vector<std::string> vec)
     }
     std::filesystem::current_path(newPath);
   }
+}
+
+std::filesystem::path getNewPath(std::string argument)
+{
+  std::string cur = std::filesystem::current_path();
+  if(argument == "../")
+  {
+    //go back to previous folder
+    int pos = cur.find_last_of("/");
+    
+    cur = cur.substr(0, pos);
+
+    return cur;
+  }else if(argument.substr(0,2) == "./")
+  {
+
+    if(argument.size() > 2)
+    {
+      cur = cur + argument.substr(1, argument.size());
+    }
+    if(std::filesystem::exists(cur))
+    {
+      return cur;
+    }
+   return cur;
+  }
+
+  return "";
 }
 
 void TypeCheck(CommandType cmt)
@@ -237,4 +270,5 @@ void doExecutable(CommandType cmt, std::vector<std::string> vec)
   const char *command_path = fullCommand.c_str();
   system(command_path);
 }
+
 
