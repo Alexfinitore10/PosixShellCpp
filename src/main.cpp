@@ -218,7 +218,6 @@ std::filesystem::path getNewPath(std::string argument)
       for(int i = 0; i<=argument.size(); i+=3)
       {
         argument = argument.substr(3,argument.size());
-        std::cout<<argument<<std::endl;
         int pos = cur.find_last_of("/");
         cur = cur.substr(0, pos);
       }
